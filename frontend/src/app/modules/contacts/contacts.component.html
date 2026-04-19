@@ -1,0 +1,99 @@
+<section class="contacts-layout">
+  <mat-card class="toolbar-card">
+    <div class="toolbar-head">
+      <div>
+        <p class="eyebrow">Directory</p>
+        <h1>Contacts</h1>
+      </div>
+      <div class="top-actions">
+        <a mat-stroked-button routerLink="/contacts/new">New contact</a>
+        <a mat-flat-button color="primary" routerLink="/upload">Import Excel</a>
+      </div>
+    </div>
+
+    <div class="toolbar-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Search name or email</mat-label>
+        <input matInput [formControl]="searchControl" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Filter by company</mat-label>
+        <input matInput [formControl]="filterControl" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Export fields</mat-label>
+        <mat-select [formControl]="exportFieldControl" multiple>
+          @for (field of exportableFields; track field.key) {
+            <mat-option [value]="field.key">{{ field.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="action-row">
+        <button mat-stroked-button (click)="exportSelected()" [disabled]="selection.selected.length === 0">Export selected (client)</button>
+        <button mat-stroked-button (click)="exportFromBackend()">Export</button>
+        <button mat-flat-button color="warn" (click)="batchDelete()" [disabled]="selection.selected.length === 0">Batch delete</button>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card>
+    <table mat-table [dataSource]="contacts()" matSort (matSortChange)="handleSortChange($event)" class="full-width">
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="toggleAllRows()" [checked]="isAllSelected()"></mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="selection.toggle(row)" [checked]="selection.isSelected(row)"></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="email">Email</th>
+        <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="phone">Phone</th>
+        <td mat-cell *matCellDef="let row">{{ row.phone }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="company">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="company">Company</th>
+        <td mat-cell *matCellDef="let row">{{ row.company || '-' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="updatedAt">Updated</th>
+        <td mat-cell *matCellDef="let row">{{ row.updatedAt | date: 'medium' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="openDetail(row)" matTooltip="View">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button (click)="openDetail(row)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteContact(row)" matTooltip="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openDetail(row)"></tr>
+    </table>
+
+    <mat-paginator [length]="total()" [pageSize]="pageSize()" [pageSizeOptions]="[5, 10, 25, 50]" (page)="handlePageChange($event)"></mat-paginator>
+  </mat-card>
+</section>

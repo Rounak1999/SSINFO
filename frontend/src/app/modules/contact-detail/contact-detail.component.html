@@ -1,0 +1,57 @@
+<section class="detail-page">
+  <mat-card class="detail-header">
+    <div>
+      <p class="eyebrow">Contact Record</p>
+      <h1>{{ headerTitle() }}</h1>
+      @if (contact(); as item) {
+        <p class="subtle">Last updated {{ item.updatedAt | date: 'medium' }}</p>
+      }
+    </div>
+    <a mat-stroked-button routerLink="/contacts">Back to contacts</a>
+  </mat-card>
+
+  <mat-card>
+    @if (isLockedByOther()) {
+      <div class="lock-banner">This contact is currently locked by another user. Editing is disabled.</div>
+    }
+
+    <form [formGroup]="form" class="detail-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input matInput formControlName="phone" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Company</mat-label>
+        <input matInput formControlName="company" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-span">
+        <mat-label>Address</mat-label>
+        <textarea matInput rows="3" formControlName="address"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-span">
+        <mat-label>Notes</mat-label>
+        <textarea matInput rows="4" formControlName="notes"></textarea>
+      </mat-form-field>
+    </form>
+
+    <div class="detail-actions">
+      <button mat-flat-button color="primary" (click)="save()" [disabled]="isLockedByOther() || isSaving()">Save changes</button>
+      @if (!isCreateMode) {
+        <button mat-stroked-button color="warn" (click)="delete()">Delete</button>
+      }
+    </div>
+  </mat-card>
+</section>

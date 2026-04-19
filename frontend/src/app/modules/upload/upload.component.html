@@ -1,0 +1,82 @@
+<section class="page-grid">
+  <mat-card class="hero-card">
+    <div class="hero-copy">
+      <p class="eyebrow">Bulk Import</p>
+      <h1>Upload Contacts from Excel</h1>
+      <p>Validate rows on the client first, then send the file to the API for authoritative validation and import.</p>
+    </div>
+
+    <div class="hero-actions">
+      <label class="file-picker" for="contact-file">
+        <mat-icon>upload_file</mat-icon>
+        <span>{{ selectedFile()?.name || 'Choose Excel file' }}</span>
+      </label>
+      <input id="contact-file" type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" hidden />
+
+      <button mat-flat-button color="primary" (click)="uploadFile()" [disabled]="!selectedFile() || uploading() || validating()">
+        {{ uploading() ? 'Uploading...' : 'Upload file' }}
+      </button>
+
+      <button mat-stroked-button (click)="downloadErrors()" [disabled]="previewErrors().length === 0">
+        Download error report
+      </button>
+    </div>
+  </mat-card>
+
+  <mat-card>
+    <h2>Pre-upload validation</h2>
+    <p class="subtle">Rows with missing required fields or invalid formats are shown below before upload.</p>
+
+    @if (validating()) {
+      <p>Validating workbook...</p>
+    } @else if (previewErrors().length) {
+      <table mat-table [dataSource]="previewErrors()" class="full-width">
+        <ng-container matColumnDef="rowNumber">
+          <th mat-header-cell *matHeaderCellDef>Row</th>
+          <td mat-cell *matCellDef="let row">{{ row.rowNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef>Phone</th>
+          <td mat-cell *matCellDef="let row">{{ row.phone }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="errors">
+          <th mat-header-cell *matHeaderCellDef>Errors</th>
+          <td mat-cell *matCellDef="let row">{{ row.errors.join(', ') }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table>
+    } @else {
+      <p>No validation issues detected yet.</p>
+    }
+  </mat-card>
+
+  @if (uploadResult(); as result) {
+    <mat-card class="summary-card">
+      <h2>Upload Summary</h2>
+      <div class="summary-grid">
+        <div>
+          <strong>{{ result.validCount }}</strong>
+          <span>Imported</span>
+        </div>
+        <div>
+          <strong>{{ result.invalidCount }}</strong>
+          <span>Rejected</span>
+        </div>
+      </div>
+    </mat-card>
+  }
+</section>

@@ -1,0 +1,20 @@
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  color: #0f172a;
+}
+
+h1, h2, h3 {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+mat-card {
+  border-radius: 24px !important;
+  box-shadow: 0 16px 50px rgba(15, 23, 42, 0.08) !important;
+}
