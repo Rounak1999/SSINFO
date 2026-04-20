@@ -20,8 +20,12 @@ import { LoadingService } from '../../../core/services/loading.service';
         z-index: 1400;
         display: grid;
         place-items: center;
-        background: rgba(15, 23, 42, 0.18);
-        backdrop-filter: blur(2px);
+        background: rgba(240, 244, 255, 0.6);
+        backdrop-filter: blur(8px) saturate(1.5);
+        -webkit-backdrop-filter: blur(8px) saturate(1.5);
+      }
+      ::ng-deep .overlay .mat-mdc-progress-spinner circle {
+        stroke: url(#futuristic-gradient) !important;
       }
     `,
   ],
